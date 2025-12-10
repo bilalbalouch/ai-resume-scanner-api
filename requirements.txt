@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 flask==3.1.2
 torch==2.9.1
 transformers==4.57.3
@@ -12,17 +11,3 @@ gunicorn==22.1.0
 pdfminer.six==20251107
 hf-xet==1.2.0
 nltk==3.8.1
-<<<<<<< HEAD
-=======
-=======
-flask
-torch
-transformers
-sentence-transformers
-scikit-learn
-pypdf
-python-docx
-gunicorn
->>>>>>> 4b55ff3440c3a2b94162ceccda55426e221ce08c
-
->>>>>>> b40284e51c54d8c5bc7018d05447ed5a27ca45c2
