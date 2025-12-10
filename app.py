@@ -13,7 +13,11 @@ from sklearn.metrics.pairwise import cosine_similarity
 
 # ---------------- FLASK SETUP ----------------
 app = Flask(__name__)
-UPLOAD_FOLDER = "uploads"
+
+# ---------------- ENVIRONMENT VARIABLES ----------------
+UPLOAD_FOLDER = os.environ.get("UPLOAD_FOLDER", "uploads")
+DEBUG_MODE = os.environ.get("FLASK_DEBUG", "False") == "True"
+
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
 # ---------------- LOAD AI MODELS ----------------
@@ -42,13 +46,13 @@ print("Models loaded successfully")
 
 def extract_text(pdf_path):
     text = ""
-    # 1️⃣ Normal text extraction
+    # Normal text extraction
     with pdfplumber.open(pdf_path) as pdf:
         for page in pdf.pages:
             extracted = page.extract_text()
             if extracted:
                 text += extracted + "\n"
-    # 2️⃣ If empty → use OCR
+    # OCR fallback
     if len(text.strip()) < 30:
         with pdfplumber.open(pdf_path) as pdf:
             for page in pdf.pages:
@@ -146,4 +150,8 @@ def serve_resume(filename):
 
 # ---------------- RUN SERVER ----------------
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(
+        host="0.0.0.0",
+        port=int(os.environ.get("PORT", 5000)),
+        debug=DEBUG_MODE
+    )
