@@ -1,14 +1,22 @@
 flask==3.1.2
-torch==2.9.1
+
+# CPU-ONLY PYTORCH (Render compatible)
+torch==2.9.0+cpu
+--extra-index-url https://download.pytorch.org/whl/cpu
+
+
 transformers==4.57.3
-scikit-learn==1.3.1
+sentence-transformers==2.5.1
+scikit-learn==1.2.2
+
 pdfplumber==0.11.8
 pytesseract==0.3.10
 Pillow==12.0.0
 python-docx==1.2.0
-gunicorn==23.0.0
-pdfminer.six==20251107
+
+pdfminer.six==20240706
 hf-xet==1.2.0
 nltk==3.8.1
-huggingface_hub >= 0.34.0
-sentence-transformers==2.5.1
+huggingface_hub==0.36.0
+
+gunicorn==23.0.0
