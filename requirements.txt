@@ -1,12 +1,16 @@
 flask==3.1.2
-torch==2.9.0+cpu
+
+# PyTorch (Linux-compatible CPU wheel)
+torch==2.9.0
+torchvision==0.20.0
+torchaudio==2.9.0
+
+# Transformers & embeddings
 transformers==4.57.3
 sentence-transformers==2.5.1
+huggingface_hub==0.36.0
 
-# Machine learning
-scikit-learn==1.2.2
-
-# PDF + DOCX processing (FIXED VERSIONS)
+# PDF + DOCX processing
 pdfplumber==0.11.8
 pdfminer.six==20251107
 python-docx==1.2.0
@@ -15,9 +19,8 @@ python-docx==1.2.0
 pytesseract==0.3.10
 Pillow==12.0.0
 
-# Utilities
-huggingface_hub==0.36.0
-hf-xet==1.2.0
+# ML utils
+scikit-learn==1.2.2
 nltk==3.8.1
 
 # Production server
