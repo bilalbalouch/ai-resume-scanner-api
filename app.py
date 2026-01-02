@@ -1,5 +1,6 @@
 from flask import Flask, request, jsonify, send_from_directory
 import os
+import re
 
 # -------- Resume Text Extraction --------
 import pdfplumber
@@ -64,6 +65,12 @@ def extract_skills(text):
             found.add(skill.title())
     return list(found)
 
+def extract_email(text):
+    """Extract first email found in text"""
+    email_pattern = r'[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}'
+    emails = re.findall(email_pattern, text)
+    return emails[0] if emails else None
+
 def calculate_similarity(resume_text, job_description):
     embeddings = sbert_model.encode([resume_text, job_description])
     score = cosine_similarity([embeddings[0]], [embeddings[1]])[0][0]
@@ -83,7 +90,7 @@ def analyze_resumes():
       - job_description (form field)
       - resumes (files, multiple)
     Output:
-      - ranked resumes with score, candidate name, skills, and URL
+      - ranked resumes with score, candidate name, skills, email, and URL
     """
     job_description = request.form.get("job_description")
     files = request.files.getlist("resumes")
@@ -98,16 +105,18 @@ def analyze_resumes():
         file_path = os.path.join(UPLOAD_FOLDER, file.filename)
         file.save(file_path)
 
-        # Extract text, skills, similarity
+        # Extract text, skills, email, similarity
         resume_text = extract_text(file_path)
         skills = extract_skills(resume_text)
         score = calculate_similarity(resume_text, job_description)
+        email = extract_email(resume_text)
 
         results.append({
             "resume_name": file.filename,
             "candidate_name": extract_candidate_name(file.filename),
             "match_score": score,
-            "skills": skills
+            "skills": skills,
+            "email": email
         })
 
     # Rank resumes
@@ -124,7 +133,8 @@ def analyze_resumes():
             "score": resume["match_score"],
             "resume_file": resume["resume_name"],
             "resume_url": f"{base_url}/resumes/{resume['resume_name']}",
-            "skills": resume["skills"]
+            "skills": resume["skills"],
+            "email": resume.get("email")
         })
 
     return jsonify({
@@ -135,9 +145,7 @@ def analyze_resumes():
 
 @app.route("/resumes/<filename>")
 def serve_resume(filename):
-    """
-    Serve uploaded resumes so they can be opened in external PDF viewer
-    """
+    """Serve uploaded resumes so they can be opened in external PDF viewer"""
     return send_from_directory(
         UPLOAD_FOLDER,
         filename,
